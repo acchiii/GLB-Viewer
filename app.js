@@ -320,7 +320,7 @@ class ModelLoader {
     const box2 = new THREE.Box3().setFromObject(model);
     const groundLevel = box2.min.y;
     const modelHeight = box2.max.y - box2.min.y;
-    const embedAmount = Math.min(modelHeight * 0.07, 1.5);
+    const embedAmount = Math.min(modelHeight * 0.06, 1.5);
     model.position.y -= groundLevel;
     model.position.y -= embedAmount;
     this.scene.add(model);
