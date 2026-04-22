@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Walkthrough Viewer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- LOADING SCREEN -->
+  <div id="loadingScreen" class="hidden">
+    <div class="loader-content">
+      <div class="loader-icon">
+        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="30,5 55,50 5,50" stroke="#00f0c8" stroke-width="2" fill="none" class="spin-tri"/>
+          <circle cx="30" cy="30" r="10" stroke="#00f0c8" stroke-width="2" fill="none" class="pulse-circle"/>
+        </svg>
+      </div>
+      <div class="loader-label">LOADING MODEL</div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="progress-text" id="progressText">0%</div>
+    </div>
+  </div>
+
+  <!-- UPLOAD OVERLAY -->
+  <div id="uploadOverlay">
+    <div class="upload-panel">
+      <div class="brand-mark">⬡</div>
+      <h1 class="brand-title">WALKTHROUGH<span class="brand-accent">3D</span></h1>
+      <p class="brand-sub">First-person architectural & spatial exploration</p>
+
+      <div class="upload-zone" id="uploadZone">
+        <div class="upload-icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 4L38 18H28V32H20V18H10L24 4Z" stroke="#00f0c8" stroke-width="1.5" fill="none"/>
+            <path d="M8 38H40" stroke="#00f0c8" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M8 44H40" stroke="#555" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="upload-text">Drop .glb / .gltf file here</div>
+        <div class="upload-sub">or click to browse</div>
+        <input type="file" id="fileInput" accept=".glb,.gltf" />
+      </div>
+
+      <div class="divider"><span>OR</span></div>
+
+      <div class="url-row">
+        <input type="text" id="modelUrlInput" class="url-input" placeholder="Paste model URL (.glb / .gltf)" />
+        <button id="loadUrlBtn" class="btn-primary">Load</button>
+      </div>
+
+      <div class="demo-row">
+        <button class="btn-ghost" id="loadDemoBtn">▶ Load Demo Scene</button>
+      </div>
+
+      <div class="controls-hint">
+        <div class="hint-row"><kbd>W A S D</kbd> <span>Move</span></div>
+        <div class="hint-row"><kbd>Mouse</kbd> <span>Look</span></div>
+        <div class="hint-row"><kbd>Space</kbd> <span>Jump</span></div>
+        <div class="hint-row"><kbd>Click</kbd> <span>Teleport</span></div>
+        <div class="hint-row"><kbd>Esc</kbd> <span>Release cursor</span></div>
+        <button id="themeToggle" class="btn-ghost" title="Toggle theme">◐ Theme</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- POINTER LOCK OVERLAY -->
+  <div id="pointerLockOverlay" class="hidden">
+    <div class="lock-panel">
+      <div class="lock-icon">🔓</div>
+      <h2>Click to Walk</h2>
+      <p>Click anywhere to enter first-person mode</p>
+      <div class="mini-controls">
+        <span><kbd>W A S D</kbd> Move</span>
+        <span><kbd>Space</kbd> Jump</span>
+        <span><kbd>Esc</kbd> Exit</span>
+      </div>
+      <div id="qrSection" class="qr-section hidden">
+        <div class="qr-label">Share this walkthrough</div>
+        <canvas id="qrCanvas"></canvas>
+        <div class="qr-url" id="qrUrl"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-crosshair">+</div>
+    <div class="hud-info">
+      <span id="hudFps">60 FPS</span>
+      <span id="hudPos">0, 0, 0</span>
+    </div>
+    <div class="hud-controls-mini">
+      <button id="hudThemeToggle" class="hud-exit-btn" title="Toggle theme" style="background: var(--accent); color: #000; border-color: var(--accent);">◐ Theme</button>
+      <button id="sectionCutBtn" class="hud-exit-btn" title="Press C to toggle">⬜ Section</button>
+      <button id="minimapBtn" class="hud-exit-btn" title="Press M to toggle">◎ Minimap</button>
+      <span>WASD · MOUSE · SPACE · Click</span>
+      <button id="exitBtn" class="hud-exit-btn">✕ Exit</button>
+    </div>
+    <canvas id="minimapCanvas" style="display: none;"></canvas>
+  </div>
+
+  <!-- CANVAS -->
+  <canvas id="threeCanvas"></canvas>
+
+  <!-- Scripts -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="app.js"></script>
+
+</body>
+</html>

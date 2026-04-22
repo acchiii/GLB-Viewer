@@ -1,0 +1,337 @@
+/* ============================================================
+   WALKTHROUGH 3D — STYLES
+   Dark industrial-futuristic aesthetic
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0a0b0d;
+  --panel:    #111318;
+  --border:   #1e2128;
+  --accent:   #00f0c8;
+  --accent2:  #f0a500;
+  --text:     #e0e4ed;
+  --muted:    #5a6070;
+  --danger:   #ff3b5c;
+  --mono:     'Space Mono', monospace;
+  --sans:     'Rajdhani', sans-serif;
+  --fog:      #1a1a2e;
+  --crosshair: rgba(255,255,255,0.7);
+  --hud-info: rgba(255,255,255,0.4);
+  --overlay-bg: rgba(0,0,0,0.72);
+  --lock-panel-bg: rgba(17,19,24,0.9);
+  --upload-grid: rgba(0,240,200,0.04);
+  --upload-gradient-start: #0d1520;
+  --upload-gradient-end: #0a0b0d;
+}
+
+:root[data-theme="light"] {
+  --bg:       #f0f2f5;
+  --panel:    #ffffff;
+  --border:   #d8dce6;
+  --accent:   #0091ff;
+  --accent2:  #ff6b00;
+  --text:     #1a1d24;
+  --muted:    #6b7280;
+  --danger:   #dc2626;
+  --fog:      #87ceeb;
+  --crosshair: rgba(0,0,0,0.5);
+  --hud-info: rgba(0,0,0,0.4);
+  --overlay-bg: rgba(255,255,255,0.75);
+  --lock-panel-bg: rgba(255,255,255,0.92);
+  --upload-grid: rgba(0,145,255,0.06);
+  --upload-gradient-start: #e8f4ff;
+  --upload-gradient-end: #f0f2f5;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+}
+
+/* ---- Canvas ---- */
+#threeCanvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: block;
+  z-index: 0;
+}
+
+/* ---- Utility ---- */
+.hidden { display: none !important; }
+
+/* ============================================================
+   UPLOAD OVERLAY
+   ============================================================ */
+#uploadOverlay {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse at 60% 40%, var(--upload-gradient-start) 0%, var(--upload-gradient-end) 70%);
+}
+
+#uploadOverlay::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--upload-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--upload-grid) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.upload-panel {
+  position: relative;
+  width: min(480px, 94vw);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  padding: 36px 32px 28px;
+  display: flex; flex-direction: column; gap: 18px;
+  box-shadow: 0 0 60px rgba(0,240,200,0.06), 0 24px 80px rgba(0,0,0,0.6);
+}
+
+.brand-mark {
+  font-size: 28px; color: var(--accent);
+  line-height: 1; margin-bottom: -4px;
+}
+
+.brand-title {
+  font-family: var(--sans);
+  font-size: 2.4rem; font-weight: 700;
+  letter-spacing: 0.12em; line-height: 1;
+  color: var(--text);
+}
+.brand-accent { color: var(--accent); margin-left: 4px; }
+
+.brand-sub {
+  font-size: 0.85rem; color: var(--muted);
+  font-family: var(--mono);
+  letter-spacing: 0.04em;
+  margin-top: -6px;
+}
+
+/* Upload zone */
+.upload-zone {
+  position: relative;
+  border: 1.5px dashed var(--border);
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--accent);
+  background: rgba(0,240,200,0.04);
+}
+.upload-zone input[type=file] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer;
+}
+.upload-icon svg { width: 44px; height: 44px; }
+.upload-text { font-family: var(--sans); font-weight: 600; font-size: 1rem; color: var(--text); }
+.upload-sub { font-size: 0.8rem; color: var(--muted); font-family: var(--mono); }
+
+/* Divider */
+.divider {
+  display: flex; align-items: center; gap: 12px;
+  color: var(--muted); font-size: 0.75rem; font-family: var(--mono);
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* URL row */
+.url-row { display: flex; gap: 8px; }
+.url-input {
+  flex: 1;
+  background: #0d0f13; border: 1px solid var(--border);
+  color: var(--text); font-family: var(--mono); font-size: 0.8rem;
+  padding: 10px 12px; outline: none;
+  transition: border-color 0.2s;
+}
+.url-input:focus { border-color: var(--accent); }
+.url-input::placeholder { color: var(--muted); }
+
+.btn-primary {
+  background: var(--accent); color: #000;
+  border: none; padding: 10px 18px;
+  font-family: var(--sans); font-weight: 700;
+  font-size: 0.9rem; letter-spacing: 0.06em;
+  cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+}
+.btn-primary:hover { opacity: 0.85; }
+.btn-primary:active { transform: scale(0.97); }
+
+.demo-row { text-align: center; }
+.btn-ghost {
+  background: none; border: 1px solid var(--border);
+  color: var(--muted); font-family: var(--mono); font-size: 0.8rem;
+  padding: 9px 20px; cursor: pointer; letter-spacing: 0.04em;
+  transition: color 0.2s, border-color 0.2s;
+}
+.btn-ghost:hover { color: var(--accent); border-color: var(--accent); }
+
+/* Controls hint */
+.controls-hint {
+  display: flex; flex-wrap: wrap; gap: 8px 20px;
+  padding-top: 4px; border-top: 1px solid var(--border);
+}
+.hint-row { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; }
+.hint-row span { color: var(--muted); }
+kbd {
+  background: var(--panel); border: 1px solid var(--border);
+  padding: 2px 7px; font-family: var(--mono);
+  font-size: 0.75rem; color: var(--accent);
+  border-radius: 2px; letter-spacing: 0.02em;
+}
+
+/* ============================================================
+   LOADING SCREEN
+   ============================================================ */
+#loadingScreen {
+  position: fixed; inset: 0; z-index: 200;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.loader-content {
+  text-align: center; display: flex; flex-direction: column;
+  align-items: center; gap: 16px;
+}
+
+.loader-icon svg {
+  width: 72px; height: 72px;
+}
+
+@keyframes spinSlow { to { transform: rotate(360deg); } }
+@keyframes pulseFade { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+.spin-tri { animation: spinSlow 3s linear infinite; transform-origin: 50% 50%; }
+.pulse-circle { animation: pulseFade 1.5s ease-in-out infinite; }
+
+.loader-label {
+  font-family: var(--mono); font-size: 0.72rem;
+  letter-spacing: 0.3em; color: var(--muted);
+}
+
+.progress-bar-wrap {
+  width: 240px; height: 3px; background: var(--border);
+}
+.progress-bar {
+  height: 100%; width: 0%;
+  background: var(--accent);
+  transition: width 0.15s ease;
+  box-shadow: 0 0 8px var(--accent);
+}
+.progress-text {
+  font-family: var(--mono); font-size: 0.75rem; color: var(--accent);
+}
+
+/* ============================================================
+   POINTER LOCK OVERLAY
+   ============================================================ */
+#pointerLockOverlay {
+  position: fixed; inset: 0; z-index: 90;
+  background: var(--overlay-bg);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+
+.lock-panel {
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  padding: 36px 40px;
+  background: var(--lock-panel-bg);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  max-width: 400px; width: 90%;
+  box-shadow: 0 0 60px rgba(0,240,200,0.08);
+}
+
+.lock-icon { font-size: 2.4rem; }
+
+.lock-panel h2 {
+  font-family: var(--sans); font-weight: 700;
+  font-size: 1.8rem; letter-spacing: 0.1em; color: var(--text);
+}
+.lock-panel p { font-size: 0.9rem; color: var(--muted); font-family: var(--mono); }
+
+.mini-controls {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  justify-content: center; font-size: 0.8rem; color: var(--muted);
+}
+.mini-controls kbd { font-size: 0.7rem; }
+
+/* QR */
+.qr-section {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  border-top: 1px solid var(--border); padding-top: 14px; width: 100%;
+}
+.qr-label { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.2em; color: var(--muted); }
+#qrCanvas { border: 2px solid var(--border); }
+.qr-url {
+  font-family: var(--mono); font-size: 0.65rem; color: var(--muted);
+  word-break: break-all; text-align: center; max-width: 280px;
+}
+
+/* ============================================================
+   HUD
+   ============================================================ */
+#hud {
+  position: fixed; inset: 0; z-index: 80;
+  pointer-events: none;
+}
+
+.hud-crosshair {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.6rem; color: var(--crosshair);
+  font-family: var(--mono); line-height: 1;
+  text-shadow: 0 0 6px var(--accent);
+  pointer-events: none;
+  user-select: none;
+}
+
+.hud-info {
+  position: absolute; bottom: 16px; left: 16px;
+  display: flex; gap: 16px;
+  font-family: var(--mono); font-size: 0.72rem; color: var(--hud-info);
+}
+
+.hud-controls-mini {
+  position: absolute; bottom: 16px; right: 16px;
+  display: flex; align-items: center; gap: 14px;
+  font-family: var(--mono); font-size: 0.72rem; color: rgba(255,255,255,0.35);
+  pointer-events: all;
+}
+.hud-exit-btn {
+  background: rgba(255,59,92,0.15); border: 1px solid rgba(255,59,92,0.3);
+  color: rgba(255,59,92,0.8); font-family: var(--mono); font-size: 0.72rem;
+  padding: 5px 10px; cursor: pointer; pointer-events: all;
+  transition: background 0.2s;
+}
+.hud-exit-btn:hover { background: rgba(255,59,92,0.3); }
+
+#minimapCanvas {
+  position: absolute; top: 16px; right: 16px;
+  width: 150px; height: 150px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 480px) {
+  .upload-panel { padding: 24px 18px 20px; }
+  .brand-title { font-size: 1.9rem; }
+  .controls-hint { gap: 6px 14px; }
+}
